@@ -32,8 +32,8 @@
     "api"
   ],
   "private": true,
-  "author":,
-  "license":,
+  "author":"Safal Raj Pandey",
+  "license":"Open",
   "dependencies": {
     "async": "^2.6.0",
     "babel-polyfill": "^6.23.0",
