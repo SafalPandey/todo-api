@@ -6,11 +6,11 @@ import User from '../models/user';
  *
  * @return {Promise}
  */
-export function getAllUsers(pageNumber) {
+export function getAllUsers(page) {
   return User.fetchPage({
     withRelated: ['todos'],
     pageSize: 10,
-    page: pageNumber
+    page: page
   }).then(users => {
     if (users.models.length === 0) {
       throw new Boom.notFound('Users not found');
@@ -73,11 +73,9 @@ export function createUser(user) {
  * @return {Promise}
  */
 export function updateUser(id, user) {
-  return new User({ id })
-    .save(
-      { firstname: user.firstname, lastname: user.lastname, hobby: user.hobby },
-      { method: 'update' }
-    )
+  return new User()
+    .where({ id })
+    .save({ firstname: user.firstname }, { method: 'update' })
     .then(user => user.refresh());
 }
 

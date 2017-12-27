@@ -3,6 +3,7 @@ import request from 'supertest';
 import app from '../../src/index';
 import bookshelf from '../../src/db';
 
+let id;
 /**
  * Tests for '/api/users'
  */
@@ -18,9 +19,7 @@ describe('Users Controller Test', () => {
     request(app)
       .get('/api/users')
       .end((err, res) => {
-        expect(res.statusCode).to.be.equal(200);
-        expect(res.body.data).to.be.an('array');
-        expect(res.body.data).to.have.lengthOf(0);
+        expect(res.statusCode).to.be.equal(404);
 
         done();
       });
@@ -42,7 +41,7 @@ describe('Users Controller Test', () => {
         expect(message).to.be.equal('Bad Request');
         expect(details).to.be.an('array');
         expect(details[0]).to.have.property('message');
-        expect(details[0]).to.have.property('param', 'name');
+        expect(details[0]).to.have.property('param', 'firstname');
 
         done();
       });
@@ -50,7 +49,12 @@ describe('Users Controller Test', () => {
 
   it('should create a new user with valid data', done => {
     let user = {
-      name: 'Jane Doe'
+      firstname: 'Safal',
+      lastname: 'pandey',
+      username: 'safal',
+      email: 'as@aa',
+      password: 'password',
+      hobby: 'abc'
     };
 
     request(app)
@@ -62,25 +66,25 @@ describe('Users Controller Test', () => {
         expect(res.statusCode).to.be.equal(201);
         expect(data).to.be.an('object');
         expect(data).to.have.property('id');
-        expect(data).to.have.property('name');
+        expect(data).to.have.property('username');
         expect(data).to.have.property('createdAt');
         expect(data).to.have.property('updatedAt');
-        expect(data.name).to.be.equal(user.name);
-
+        expect(data.username).to.be.equal(user.username);
+        id = data.id;
         done();
       });
   });
 
   it('should get information of user', done => {
     request(app)
-      .get('/api/users/1')
+      .get('/api/users/' + id)
       .end((err, res) => {
         let { data } = res.body;
 
         expect(res.statusCode).to.be.equal(200);
         expect(data).to.be.an('object');
         expect(data).to.have.property('id');
-        expect(data).to.have.property('name');
+        expect(data).to.have.property('username');
         expect(data).to.have.property('createdAt');
         expect(data).to.have.property('updatedAt');
 
@@ -104,11 +108,11 @@ describe('Users Controller Test', () => {
 
   it('should update a user if name is provided', done => {
     let user = {
-      name: 'John Doe'
+      firstname: 'John Doe'
     };
 
     request(app)
-      .put('/api/users/1')
+      .put('/api/users/' + id)
       .send(user)
       .end((err, res) => {
         let { data } = res.body;
@@ -116,10 +120,10 @@ describe('Users Controller Test', () => {
         expect(res.statusCode).to.be.equal(200);
         expect(data).to.be.an('object');
         expect(data).to.have.property('id');
-        expect(data).to.have.property('name');
+        expect(data).to.have.property('firstname');
         expect(data).to.have.property('createdAt');
         expect(data).to.have.property('updatedAt');
-        expect(data.name).to.be.equal(user.name);
+        expect(data.firstname).to.be.equal(user.firstname);
 
         done();
       });
@@ -131,7 +135,7 @@ describe('Users Controller Test', () => {
     };
 
     request(app)
-      .put('/api/users/1')
+      .put('/api/users/' + id)
       .send(user)
       .end((err, res) => {
         let { code, message, details } = res.body.error;
@@ -141,7 +145,7 @@ describe('Users Controller Test', () => {
         expect(message).to.be.equal('Bad Request');
         expect(details).to.be.an('array');
         expect(details[0]).to.have.property('message');
-        expect(details[0]).to.have.property('param', 'name');
+        expect(details[0]).to.have.property('param', 'noname');
 
         done();
       });
@@ -149,7 +153,7 @@ describe('Users Controller Test', () => {
 
   it('should delete a user if valid id is provided', done => {
     request(app)
-      .delete('/api/users/1')
+      .delete('/api/users/' + id)
       .end((err, res) => {
         expect(res.statusCode).to.be.equal(204);
 
