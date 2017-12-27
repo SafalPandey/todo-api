@@ -10,7 +10,7 @@ export function up(knex) {
     table
       .timestamp('created_at')
       .notNull()
-      .defaultTo(knex.raw('getdate()'));
+      .defaultTo(knex.raw('CURRENT_TIMESTAMP'));
     table.timestamp('updated_at').notNull();
     table.string('firstname').notNull();
     table.string('lastname').notNull();
