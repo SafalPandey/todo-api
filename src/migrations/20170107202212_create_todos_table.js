@@ -10,9 +10,13 @@ export function up(knex) {
     table
       .timestamp('created_at')
       .notNull()
-      .defaultTo(knex.raw('now()'));
+      .defaultTo(knex.raw('getdate()'));
     table.timestamp('updated_at').notNull();
-    table.integer('user_id').references('users.id').onDelete('CASCADE').notNull();
+    table
+      .integer('user_id')
+      .references('users.id')
+      .onDelete('CASCADE')
+      .notNull();
     table.string('todo').notNull();
     table.string('description');
   });
