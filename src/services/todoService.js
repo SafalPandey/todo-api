@@ -169,10 +169,9 @@ export function updateTodo(id, todo) {
       )
       .then(todo => todo.refresh());
   } else {
-    return Todo()
-      .where({
-        id
-      })
+    return Todo.where({
+      id
+    })
       .save(
         {
           todo: todo.todo
